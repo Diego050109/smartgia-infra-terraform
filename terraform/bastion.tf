@@ -1,8 +1,14 @@
+###############################################
+# ✅ KEY PAIR
+###############################################
 resource "aws_key_pair" "bastion_key" {
   key_name   = "smartgia-bastion-key"
   public_key = file(pathexpand("~/.ssh/smartgia-bastion.pub"))
 }
 
+###############################################
+# ✅ SECURITY GROUP - BASTION
+###############################################
 resource "aws_security_group" "bastion_sg" {
   name        = "smartgia-bastion-sg"
   description = "SSH access to Bastion Host"
@@ -29,24 +35,11 @@ resource "aws_security_group" "bastion_sg" {
   })
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"]
-}
-
+###############################################
+# ✅ BASTION EC2 INSTANCE
+###############################################
 resource "aws_instance" "bastion" {
-  ami                    = data.aws_ami.ubuntu.id
+  ami                    = "ami-0030e4319cbf4dbf2"
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.public_1.id
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]

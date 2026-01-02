@@ -1,12 +1,19 @@
+###############################################
+# ✅ OUTPUTS SMARTGIA
+###############################################
+
 output "region" {
-  value = var.aws_region
+  description = "AWS region in use"
+  value       = var.aws_region
 }
 
 output "vpc_id" {
-  value = aws_vpc.main.id
+  description = "VPC ID"
+  value       = aws_vpc.main.id
 }
 
 output "public_subnets" {
+  description = "Public subnet IDs"
   value = [
     aws_subnet.public_1.id,
     aws_subnet.public_2.id
@@ -14,6 +21,7 @@ output "public_subnets" {
 }
 
 output "private_subnets" {
+  description = "Private subnet IDs"
   value = [
     aws_subnet.private_1.id,
     aws_subnet.private_2.id
@@ -21,9 +29,11 @@ output "private_subnets" {
 }
 
 output "alb_dns_name" {
-  value = aws_lb.alb.dns_name
+  description = "DNS name of the Application Load Balancer"
+  value       = aws_lb.alb.dns_name
 }
 
 output "bastion_public_ip" {
-  value = aws_instance.bastion.public_ip
+  description = "Public IP of bastion host"
+  value       = aws_instance.bastion.public_ip
 }
