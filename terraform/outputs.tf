@@ -34,6 +34,11 @@ output "alb_dns_name" {
 }
 
 output "bastion_public_ip" {
-  description = "Public IP of bastion host"
+  description = "Public IP of bastion host (may change)"
   value       = aws_instance.bastion.public_ip
+}
+
+output "bastion_elastic_ip" {
+  description = "Elastic IP of bastion host (FIXED IP)"
+  value       = aws_eip.bastion_eip.public_ip
 }
