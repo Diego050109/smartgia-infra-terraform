@@ -3,7 +3,7 @@ resource "aws_eip" "nat_eip" {
   domain = "vpc"
 
   tags = merge(local.tags, {
-    Name = "${var.project_name}-nat-eip"
+    Name = "${local.prefix}-nat-eip"
   })
 }
 
@@ -13,7 +13,7 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public_1.id
 
   tags = merge(local.tags, {
-    Name = "${var.project_name}-nat"
+    Name = "${local.prefix}-nat"
   })
 
   depends_on = [aws_internet_gateway.igw]
@@ -29,7 +29,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = merge(local.tags, {
-    Name = "${var.project_name}-private-rt"
+    Name = "${local.prefix}-private-rt"
   })
 }
 

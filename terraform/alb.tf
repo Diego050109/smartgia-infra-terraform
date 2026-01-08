@@ -2,25 +2,29 @@
 # Application Load Balancer
 # -------------------------------------------
 resource "aws_lb" "alb" {
-  name               = "${var.project_name}-alb"
+  name               = "${local.prefix}-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
+
+  security_groups = [aws_security_group.alb_sg.id]
+  subnets         = [aws_subnet.public_1.id, aws_subnet.public_2.id]
 
   tags = merge(local.tags, {
-    Name = "${var.project_name}-alb"
+    Name = "${local.prefix}-alb"
   })
 }
 
 # -------------------------------------------
-# Target Group (future ECS)
+# Target Group (ASG/EC2 instances)
 # -------------------------------------------
 resource "aws_lb_target_group" "tg" {
-  name     = "${var.project_name}-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
+  name        = "${local.prefix}-tg"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+
+  deregistration_delay = 30
 
   health_check {
     path                = "/"
@@ -29,10 +33,11 @@ resource "aws_lb_target_group" "tg" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
+    matcher             = "200-399"
   }
 
   tags = merge(local.tags, {
-    Name = "${var.project_name}-tg"
+    Name = "${local.prefix}-tg"
   })
 }
 

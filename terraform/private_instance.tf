@@ -3,7 +3,7 @@
 ###############################################
 resource "aws_security_group" "private_sg" {
 
-  name_prefix = "smartgia-private-sg-"
+  name_prefix = "${local.prefix}-private-sg-"
   description = "Allow SSH from Bastion + HTTP from ALB"
   vpc_id      = aws_vpc.main.id
 
@@ -41,7 +41,7 @@ resource "aws_security_group" "private_sg" {
   }
 
   tags = merge(local.tags, {
-    Name = "smartgia-private-sg"
+    Name = "${local.prefix}-private-sg"
   })
 }
 
@@ -50,7 +50,7 @@ resource "aws_security_group" "private_sg" {
 ###############################################
 resource "aws_launch_template" "smartgia_lt" {
 
-  name_prefix = "smartgia-lt-"
+  name_prefix = "${local.prefix}-lt-"
 
   # ✅ AMI FIJO
   image_id = "ami-0030e4319cbf4dbf2"
@@ -134,12 +134,12 @@ EOF
     resource_type = "instance"
 
     tags = merge(local.tags, {
-      Name = "smartgia-asg-instance"
+      Name = "${local.prefix}-asg-instance"
     })
   }
 
   tags = merge(local.tags, {
-    Name = "smartgia-launch-template"
+    Name = "${local.prefix}-launch-template"
   })
 }
 
@@ -148,7 +148,7 @@ EOF
 ###############################################
 resource "aws_autoscaling_group" "smartgia_asg" {
 
-  name = "smartgia-asg"
+  name = "${local.prefix}-asg"
 
   desired_capacity = 2
   min_size         = 2
@@ -176,21 +176,20 @@ resource "aws_autoscaling_group" "smartgia_asg" {
     create_before_destroy = true
   }
 
-  tag {
-    key                 = "Project"
-    value               = "smartgia"
-    propagate_at_launch = true
+  # Tags estándar (Project/Env/Owner)
+  dynamic "tag" {
+    for_each = local.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
   }
 
-  tag {
-    key                 = "Owner"
-    value               = "SMARTGIA"
-    propagate_at_launch = true
-  }
-
+  # Name tag para instancias del ASG
   tag {
     key                 = "Name"
-    value               = "smartgia-asg-instance"
+    value               = "${local.prefix}-asg-instance"
     propagate_at_launch = true
   }
 }

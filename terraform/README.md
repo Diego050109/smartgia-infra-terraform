@@ -1,53 +1,29 @@
-# 🚀 SMARTGIA - High Availability Infrastructure with Terraform
+# ✅ SMARTGIA - High Availability Infrastructure (Terraform + AWS)
 
-This project deploys a **high availability AWS infrastructure** using **Terraform**, including:
+This project deploys a high availability architecture on AWS using Terraform.
 
-✅ VPC with Public & Private Subnets (2 AZ)  
-✅ Internet Gateway + NAT Gateway  
-✅ Bastion Host (SSH access)  
-✅ Application Load Balancer (ALB)  
-✅ Auto Scaling Group (ASG) with Launch Template  
-✅ Private EC2 instances running NGINX  
+✅ Components included:
 
----
-
-## 🏗️ Architecture Overview
-
-- **Public Subnets**
-  - Bastion Host (SSH access)
-  - ALB (HTTP access)
-
-- **Private Subnets**
-  - Auto Scaling Group instances
-  - Instances are only reachable via ALB or Bastion
+- VPC with public and private subnets
+- Bastion Host (public EC2) with Elastic IP
+- Application Load Balancer (ALB)
+- Auto Scaling Group (ASG) in private subnets
+- Launch Template with NGINX installed via `user_data`
+- Security Groups (restricted access)
 
 ---
 
-## ✅ Infrastructure Components
+## ✅ Architecture
 
-| Component | Description |
-|----------|-------------|
-| VPC | Private network for the infrastructure |
-| Public Subnets | Hosts ALB and Bastion |
-| Private Subnets | Hosts EC2 instances in ASG |
-| NAT Gateway | Allows outbound internet access for private instances |
-| Bastion Host | Secure SSH access to private instances |
-| ALB | Distributes traffic across instances |
-| ASG | Ensures high availability and scaling |
-| Launch Template | Defines how ASG instances are created |
+Internet → ALB → Auto Scaling Group (Private EC2 Instances)  
+                  ↑  
+              Bastion Host (SSH Access)
 
 ---
 
-## ⚙️ Requirements
-
-- AWS CLI configured (`aws configure`)
-- Terraform installed
-- Valid AWS credentials (AWS Academy / VocLabs supported)
-
----
-
-## 🚀 How to Deploy
+## ✅ How to Deploy
 
 ### 1️⃣ Initialize Terraform
+
 ```bash
 terraform init
